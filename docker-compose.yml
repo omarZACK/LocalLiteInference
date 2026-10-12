@@ -1,0 +1,29 @@
+services:
+  # LiteLLM proxy service acting as an OpenAI-compatible gateway
+  litellm-proxy:
+    image: ghcr.io/berriai/litellm:main-latest
+    container_name: litellm-proxy
+    env_file:
+      - .env
+    ports:
+      - "${LITELLM_PORT:-4000}:4000"
+    volumes:
+      - ./config/litellm_config.yaml:/app/config.yaml
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    command: ["--config", "/app/config.yaml", "--port", "4000", "--host", "0.0.0.0"]
+    restart: unless-stopped
+
+  # Optional on-demand client for testing the proxy
+  python-client:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: litellm-sdk-client
+    env_file:
+      - .env
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    command: ["python", "-m", "scripts.litellm_client"]
+    depends_on:
+      - litellm-proxy

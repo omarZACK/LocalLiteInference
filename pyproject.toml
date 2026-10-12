@@ -1,0 +1,29 @@
+[project]
+name = "localliteinference"
+version = "0.1.0"
+description = "Containerized LiteLLM gateway with Ollama and local model routing"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+authors = [{name = "omarZACK", email = "o.e.wawy@gmail.com"}]
+dependencies = [
+    "litellm",
+    "pytest>=9.1.1",
+    "python-dotenv",
+    "requests",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest",
+]
+
+[tool.uv]
+# uv settings if any (leave empty or remove if not needed)
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["scripts/tests"]
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"

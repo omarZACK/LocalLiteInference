@@ -1,0 +1,54 @@
+# ----------------------------------------------------------------------
+# LiteLLM configuration for LocalLiteInference
+# ----------------------------------------------------------------------
+# This file is mounted into the container at /app/config.yaml.
+# It defines dynamic routing, generic aliases, and fallback handling.
+# ----------------------------------------------------------------------
+
+model_list:
+    # Direct model alias for local llama3.2:3b
+    - model_name: "llama3.2:3b"
+      litellm_params:
+          model: "ollama_chat/llama3.2:3b"
+          api_base: "http://host.docker.internal:11434"
+          drop_params: true
+
+    # Generic Ollama routing matching the ollama_chat/ prefix
+    - model_name: "ollama_chat/*"
+      litellm_params:
+          model: "ollama_chat/*"
+          api_base: "http://host.docker.internal:11434"
+          drop_params: true
+
+    # Named coding and chat aliases
+    - model_name: "coding-fast"
+      litellm_params:
+          model: "ollama_chat/qwen2.5-coder:3b"
+          api_base: "http://host.docker.internal:11434"
+          drop_params: true
+
+    - model_name: "coding-smart"
+      litellm_params:
+          model: "ollama_chat/qwen2.5-coder:7b"
+          api_base: "http://host.docker.internal:11434"
+          drop_params: true
+
+    - model_name: "general-chat"
+      litellm_params:
+          model: "ollama_chat/llama3.2:3b"
+          api_base: "http://host.docker.internal:11434"
+          drop_params: true
+
+    # HuggingFace inference endpoint pattern
+    - model_name: "huggingface/*"
+      litellm_params:
+          model: "huggingface/*"
+          api_base: "os.environ/HUGGINGFACE_API_BASE"
+          api_key: "os.environ/HUGGINGFACE_API_KEY"
+          drop_params: true
+
+general_settings:
+    master_key: "os.environ/LITELLM_MASTER_KEY"
+    request_rate_limit: 0
+    streaming: true
+    verbose: true
